@@ -1,5 +1,6 @@
 package kba;
 
+import kba.model.Client;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
