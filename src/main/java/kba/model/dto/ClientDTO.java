@@ -1,5 +1,6 @@
-package kba.model;
+package kba.model.dto;
 
+import kba.model.BankAccount;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import sun.security.util.Password;
@@ -9,16 +10,12 @@ import sun.security.util.Password;
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(of= {"id"})
-@ToString(of= {"id","lastName","firstName", "mail", "bankAccount"})
-public class Client {
+@ToString(of= {"lastName","firstName", "mail"})
+public class ClientDTO {
 
-    long id;
     String lastName;
     String firstName;
-    String mail;
     String password;
-    BankAccount bankAccount;
-    String token;
+    String mail;
 
 }

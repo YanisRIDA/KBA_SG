@@ -1,6 +1,5 @@
-package kba.repository;
+package kba.dao;
 
-import kba.model.Client;
 import kba.model.Operation;
 import kba.utils.OperationType;
 import org.springframework.stereotype.Repository;
@@ -10,12 +9,12 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public class OperationRepository {
+public class OperationDAO {
 
     private final List<Operation> operations = new ArrayList<>();
 
-    public Operation createOperation(OperationType operationType, long amount) {
-        Operation operation = new Operation(operations.size(), amount, operationType, new Date());
+    public Operation createOperation(OperationType operationType, long amount, long oldBalance, long newBalance) {
+        Operation operation = new Operation(operations.size(), amount, operationType, new Date(), oldBalance, newBalance);
         operations.add(operation);
         return operation;
     }

@@ -1,4 +1,4 @@
-package kba.model;
+package kba.model.dto;
 
 import kba.utils.OperationType;
 import lombok.*;
@@ -11,11 +11,9 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(of= {"id"})
-@ToString(of= {"id", "amount", "operationType", "date", "oldBalance", "newBalance"})
-public class Operation {
+@ToString(of= {"amount", "operationType", "date", "oldBalance", "newBalance"})
+public class OperationDTO {
 
-    long id;
     long amount;
     OperationType operationType;
     Date date;

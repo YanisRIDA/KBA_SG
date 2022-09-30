@@ -1,4 +1,4 @@
-package kba.repository;
+package kba.dao;
 
 import kba.model.BankAccount;
 import kba.model.Client;
@@ -6,12 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Repository
-public class ClientRepository {
+public class ClientDAO {
 
     private final List<Client> clients = new ArrayList<>();
 
@@ -23,10 +20,11 @@ public class ClientRepository {
         }
         clientToAdd.setId(clients.size());
         clientToAdd.setToken("token"+clientToAdd.getId());
-        clientToAdd.setAccount(new BankAccount(clientToAdd.getId(), 0, new ArrayList<>()));
+        clientToAdd.setBankAccount(new BankAccount(clientToAdd.getId(), 0, new ArrayList<>()));
         clients.add(clientToAdd);
     }
 
+    //Simulates oAuth token generation
     public String getToken(String mail, String password) {
         for(Client client : clients) {
             if(client.getMail().equals(mail)) {
