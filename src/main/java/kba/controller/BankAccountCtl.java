@@ -21,7 +21,7 @@ public class BankAccountCtl {
     BankAccountSvc bankAccountSvc;
 
     @PostMapping("/depose")
-    @ApiOperation(value = "Make a deposit", authorizations = {@Authorization(value="oauth2")})
+    @ApiOperation(value = "Make a deposit")
     ResponseEntity<OperationDTO> depose(
             @ApiParam(value="Amount of money to depose", required = true)
             @RequestParam("amount")long amount) {
@@ -30,7 +30,7 @@ public class BankAccountCtl {
     }
 
     @PostMapping("/withdraw")
-    @ApiOperation(value = "Make a withdrawal", authorizations = {@Authorization(value="oauth2")})
+    @ApiOperation(value = "Make a withdrawal")
     ResponseEntity<OperationDTO> withdraw(
             @ApiParam(value="Amount of money to withdraw", required = true)
             @RequestParam("amount")long amount) {
@@ -39,7 +39,7 @@ public class BankAccountCtl {
     }
 
     @GetMapping("/consult")
-    @ApiOperation(value = "Check your balance and your operations", authorizations = {@Authorization(value="oauth2")})
+    @ApiOperation(value = "Check your balance and your operations")
     ResponseEntity<BankAccountDTO> consult() {
         //TODO EXCEPTION HANDLER
         return new ResponseEntity<>(bankAccountSvc.consult(), HttpStatus.OK);
