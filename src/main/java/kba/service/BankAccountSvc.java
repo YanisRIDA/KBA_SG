@@ -1,11 +1,14 @@
 package kba.service;
 
-import kba.model.BankAccount;
-import kba.model.Operation;
+import kba.domain.BankAccount;
+import kba.domain.Operation;
+import kba.exception.BankAccountNotFoundException;
+import kba.exception.InvalidAmountException;
+import kba.exception.NegativeAmountException;
+import kba.exception.NegativeBalanceException;
 import kba.model.dto.BankAccountDTO;
 import kba.model.dto.OperationDTO;
 import kba.dao.BankAccountDAO;
-import kba.dao.ClientDAO;
 import kba.dao.OperationDAO;
 import kba.utils.OperationType;
 import org.modelmapper.ModelMapper;
@@ -28,40 +31,55 @@ public class BankAccountSvc {
     @Autowired
     OperationDAO operationDAO;
 
-    @Autowired
-    ClientDAO clientDAO;
+    //Creates a Bank Account and add it to the database
+    public BankAccountDTO createAccount(String firstName, String lastName) {
+        LOG.info("[KATA BANK] Creating a bank account for {} {}", firstName, lastName);
+        BankAccount bankAccount = bankAccountDAO.createBankAccount(firstName, lastName);
+        LOG.info("[KATA BANK] Successfully created bank account {}", bankAccount);
+        return modelMapper.map(bankAccount, BankAccountDTO.class);
+    }
 
-    public OperationDTO depose(long amount) {
-        LOG.info("[KATA BANK] Creating deposit operation");
+    //Creates an operation(Depose/Withdraw) and apply it on the bank account
+    public OperationDTO operation(int id, long amount, OperationType operationType) throws InvalidAmountException, BankAccountNotFoundException {
+        LOG.info("[KATA BANK] Creating {} operation", operationType);
+
         if(amount<0) {
-            //TODO THROW EXCEPTION <0
+            throw new NegativeAmountException(amount);
         }
-        //TODO TOKEN
-        BankAccount clientBankAccount = clientDAO.findClientByToken("token").getBankAccount();
-        Operation operation = operationDAO.createOperation(OperationType.DEPOSIT, amount,
-                clientBankAccount.getBalance(), clientBankAccount.getBalance()+amount);
-        clientBankAccount.addOperation(operation);
-        bankAccountDAO.updateBalance(clientBankAccount, amount);
+        BankAccount bankAccount = bankAccountDAO.findBankAccountById(id);
+        if(bankAccount==null)
+            throw new BankAccountNotFoundException(id);
+
+        long oldBalance=bankAccount.getBalance();
+        long newBalance=oldBalance;
+
+        switch (operationType) {
+            case DEPOSIT:
+                newBalance+=amount;
+                break;
+            case WITHDRAWAL:
+                newBalance-=amount;
+                if(newBalance<0)
+                    throw new NegativeBalanceException(amount);
+                break;
+        }
+
+        Operation operation = operationDAO.createOperation(operationType, amount, oldBalance, newBalance);
+        bankAccount.addOperation(operation);
+        bankAccountDAO.updateBalance(bankAccount, newBalance);
+        LOG.info("[KATA BANK] {} operation successful, new balance={}", operationType, newBalance);
         return modelMapper.map(operation,OperationDTO.class);
     }
 
-    public OperationDTO withdraw(long amount) {
-        LOG.info("[KATA BANK] Creating withdrawal operation");
-        if(amount<0) {
-            //TODO THROW EXCEPTION <0
-        }
-        //TODO TOKEN
-        BankAccount clientBankAccount = clientDAO.findClientByToken("token").getBankAccount();
-        Operation operation = operationDAO.createOperation(OperationType.WITHDRAWAL, amount,
-                clientBankAccount.getBalance(), clientBankAccount.getBalance()-amount);
-        clientBankAccount.addOperation(operation);
-        bankAccountDAO.updateBalance(clientBankAccount, -amount);
-        return modelMapper.map(operation,OperationDTO.class);
-    }
-
-    public BankAccountDTO consult() {
+    //Returns all bank account and its operation information
+    public BankAccountDTO consult(int id) throws BankAccountNotFoundException {
         LOG.info("[KATA BANK] Consulting bank account");
-        return modelMapper.map(clientDAO.findClientByToken("token").getBankAccount(), BankAccountDTO.class);
+        BankAccount bankAccount = bankAccountDAO.findBankAccountById(id);
+        if(bankAccount==null)
+            throw new BankAccountNotFoundException(id);
+
+        LOG.info("[KATA BANK] Successfully consulted bank account, account={}", bankAccount);
+        return modelMapper.map(bankAccount, BankAccountDTO.class);
     }
 
 }

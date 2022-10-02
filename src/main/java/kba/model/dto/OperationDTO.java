@@ -3,7 +3,6 @@ package kba.model.dto;
 import kba.utils.OperationType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
 import java.util.Date;
 
 @FieldDefaults(level= AccessLevel.PRIVATE)

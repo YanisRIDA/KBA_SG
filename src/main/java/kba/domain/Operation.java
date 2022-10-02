@@ -1,9 +1,8 @@
-package kba.model;
+package kba.domain;
 
 import kba.utils.OperationType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
 import java.util.Date;
 
 @FieldDefaults(level= AccessLevel.PRIVATE)
@@ -15,7 +14,7 @@ import java.util.Date;
 @ToString(of= {"id", "amount", "operationType", "date", "oldBalance", "newBalance"})
 public class Operation {
 
-    long id;
+    int id;
     long amount;
     OperationType operationType;
     Date date;
