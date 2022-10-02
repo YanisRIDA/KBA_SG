@@ -83,14 +83,14 @@ For a withdrawal, with CURL:
 You can then make GET Requests in order to consult your balance and retrieve your operation history:
 
 ```text
-    http://localhost:8080/bankaccounts/{id}/consult
+    http://localhost:8080/bankaccounts/{id}
 ```  
 
 With CURL:
 
 ```CURL
     curl -X GET \
-    "http://localhost:8080/api/v1/bankaccounts/1/consult" \
+    "http://localhost:8080/api/v1/bankaccounts/0" \
     -H "accept: */*"
 ```  
 
