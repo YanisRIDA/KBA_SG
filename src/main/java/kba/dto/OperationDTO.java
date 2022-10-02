@@ -1,9 +1,8 @@
-package kba.model;
+package kba.dto;
 
 import kba.utils.OperationType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
 import java.util.Date;
 
 @FieldDefaults(level= AccessLevel.PRIVATE)
@@ -11,13 +10,13 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(of= {"id"})
-@ToString(of= {"id", "amount", "operationType", "date"})
-public class Operation {
+@ToString(of= {"amount", "operationType", "date", "oldBalance", "newBalance"})
+public class OperationDTO {
 
-    long id;
     long amount;
     OperationType operationType;
     Date date;
+    long oldBalance;
+    long newBalance;
 
 }
