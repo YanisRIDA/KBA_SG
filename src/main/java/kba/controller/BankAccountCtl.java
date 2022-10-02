@@ -52,7 +52,7 @@ public class BankAccountCtl {
         return new ResponseEntity<>(bankAccountSvc.operation(id, amount, OperationType.WITHDRAWAL), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}/consult")
+    @GetMapping("/{id}")
     @ApiOperation(value = "Check your balance and your operations")
     ResponseEntity<BankAccountDTO> consult(
             @ApiParam(value="Id of the bank account", required = true)

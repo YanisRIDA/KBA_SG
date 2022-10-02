@@ -55,11 +55,13 @@ With CURL:
     -d "{ \"firstName\": \"Yanis\", \"lastName\": \"RIDA\"}"
 ```  
 
-Then you are able to make POST Requests in order to make deposit or withdrawal operations
+Then you are able to make POST or GET Requests in order to make deposit and withdrawal operations 
+or to consult your bank account
 
 ```text
     http://localhost:8080/bankaccounts/{id}/depose
     http://localhost:8080/bankaccounts/{id}/withdraw
+    http://localhost:8080/bankaccounts/{id}
 ```  
 
 For a deposit, with CURL:
@@ -78,7 +80,7 @@ For a withdrawal, with CURL:
     -H "accept: */*"
 ```  
 
-You can then make GET Requests in order to consult your bank account and retrieve your operation history:
+You can then make GET Requests in order to consult your balance and retrieve your operation history:
 
 ```text
     http://localhost:8080/bankaccounts/{id}/consult

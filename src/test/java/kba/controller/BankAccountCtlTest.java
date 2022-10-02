@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest
@@ -259,6 +260,15 @@ public class BankAccountCtlTest {
         assertNotNull(response.getContentAsString());
         assertTrue(response.getContentAsString().contains("Required request parameter 'amount'" +
                 " for method parameter type Long is not present"));
+    }
+
+    @Test
+    public void testConsultKONotFound() throws Exception {
+        MockHttpServletResponse response = this.mockMvc
+                .perform(get("/api/v1/bankaccounts/10"))
+                .andReturn().getResponse();
+        assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatus());
+        assertTrue(response.getContentAsString().contains("Bank account not found"));
     }
 
 }
