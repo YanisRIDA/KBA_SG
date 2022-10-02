@@ -1,6 +1,7 @@
 package kba.dao;
 
 import kba.domain.BankAccount;
+import kba.domain.Client;
 import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,9 +12,9 @@ public class BankAccountDAO {
     //Simulate database with an array list
     private final List<BankAccount> bankAccounts = new ArrayList<>();
 
-    public BankAccount createBankAccount(String firstName, String lastName) {
+    public BankAccount createBankAccount(Client client) {
         BankAccount bankAccount = new BankAccount(bankAccounts.size(), 0,
-                firstName, lastName, new ArrayList<>());
+                client, new ArrayList<>());
         bankAccounts.add(bankAccount);
         return bankAccount;
     }

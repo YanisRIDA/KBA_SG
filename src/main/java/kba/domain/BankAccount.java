@@ -10,13 +10,12 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode(of= {"id"})
-@ToString(of= {"id","balance", "operations", "lastName", "firstName"})
+@ToString(of= {"id","balance","client","operations"})
 public class BankAccount {
 
     int id;
     long balance;
-    String firstName;
-    String lastName;
+    Client client;
     List<Operation> operations;
 
     public void addOperation(Operation operation) {

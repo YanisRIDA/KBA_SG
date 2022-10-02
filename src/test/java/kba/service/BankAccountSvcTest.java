@@ -1,9 +1,11 @@
 package kba.service;
 
 import kba.dao.BankAccountDAO;
+import kba.dao.ClientDAO;
 import kba.dao.OperationDAO;
 import kba.domain.BankAccount;
 import kba.dto.BankAccountDTO;
+import kba.dto.ClientDTO;
 import kba.dto.OperationDTO;
 import kba.exception.*;
 import kba.utils.OperationType;
@@ -34,32 +36,35 @@ public class BankAccountSvcTest {
     OperationDAO operationDAO;
 
     @Spy
+    ClientDAO clientDAO;
+
+    @Spy
     ModelMapper modelMapper;
 
     @Test
     public void testCreateAccountOK() throws EmptyParameterException {
-        assertEquals(0, bankAccountSvc.createAccount("Yanis", "RIDA").getId());
+        assertEquals(0, bankAccountSvc.createAccount(new ClientDTO("Yanis","RIDA")).getId());
     }
 
     @Test
     public void testCreateAccountKOFirstNameEmpty() {
-        assertThrows(EmptyParameterException.class, () -> bankAccountSvc.createAccount("", "RIDA"));
+        assertThrows(EmptyParameterException.class, () -> bankAccountSvc.createAccount(new ClientDTO("","RIDA")));
     }
 
     @Test
     public void testCreateAccountKOLastNameEmpty() {
-        assertThrows(EmptyParameterException.class, () -> bankAccountSvc.createAccount("Yanis", ""));
+        assertThrows(EmptyParameterException.class, () -> bankAccountSvc.createAccount(new ClientDTO("Yanis","")));
     }
 
     @Test
     public void testDeposeOperationOK() throws EmptyParameterException, BankAccountNotFoundException, InvalidAmountException {
-        bankAccountSvc.createAccount("Yanis", "RIDA");
+        bankAccountSvc.createAccount(new ClientDTO("Yanis","RIDA"));
         assertEquals(100, bankAccountSvc.operation(0, 100L, OperationType.DEPOSIT).getNewBalance());
     }
 
     @Test
     public void testWithdrawOperationOK() throws EmptyParameterException, BankAccountNotFoundException, InvalidAmountException {
-        bankAccountSvc.createAccount("Yanis", "RIDA");
+        bankAccountSvc.createAccount(new ClientDTO("Yanis","RIDA"));
         bankAccountSvc.operation(0, 100L, OperationType.DEPOSIT);
         assertEquals(0, bankAccountSvc.operation(0, 100L, OperationType.WITHDRAWAL).getNewBalance());
     }
@@ -76,13 +81,13 @@ public class BankAccountSvcTest {
 
     @Test
     public void testOperationKONegativeBalance() throws EmptyParameterException {
-        bankAccountSvc.createAccount("Yanis", "RIDA");
+        bankAccountSvc.createAccount(new ClientDTO("Yanis","RIDA"));
         assertThrows(NegativeBalanceException.class, () -> bankAccountSvc.operation(0, 1000L, OperationType.WITHDRAWAL));
     }
 
     @Test
     public void testConsultOK() throws BankAccountNotFoundException, EmptyParameterException, InvalidAmountException {
-        bankAccountSvc.createAccount("Yanis", "RIDA");
+        bankAccountSvc.createAccount(new ClientDTO("Yanis","RIDA"));
         bankAccountSvc.operation(0, 100L, OperationType.DEPOSIT);
         bankAccountSvc.operation(0, 50L, OperationType.WITHDRAWAL);
         assertEquals(0, bankAccountSvc.consult(0).getId());

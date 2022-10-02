@@ -1,5 +1,6 @@
 package kba.dto;
 
+import kba.domain.Client;
 import kba.utils.OperationType;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,14 +24,13 @@ public class BankAccountDTOTest {
         operationDTO.setNewBalance(300);
         BankAccountDTO bankAccountDTO = new BankAccountDTO();
         bankAccountDTO.setId(0);
-        bankAccountDTO.setFirstName("Yanis");
-        bankAccountDTO.setLastName("RIDA");
+        bankAccountDTO.setClient(new ClientDTO("Yanis", "RIDA"));
         bankAccountDTO.setBalance(1000);
         bankAccountDTO.setOperations(new ArrayList<>());
         bankAccountDTO.getOperations().add(operationDTO);
         assertEquals(0, bankAccountDTO.getId());
-        assertEquals("Yanis", bankAccountDTO.getFirstName());
-        assertEquals("RIDA", bankAccountDTO.getLastName());
+        assertEquals("Yanis", bankAccountDTO.getClient().getFirstName());
+        assertEquals("RIDA", bankAccountDTO.getClient().getLastName());
         assertEquals(1000, bankAccountDTO.getBalance());
         assertEquals(100, bankAccountDTO.getOperations().get(0).getAmount());
     }

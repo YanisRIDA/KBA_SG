@@ -3,6 +3,7 @@ package kba.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import kba.dto.ClientDTO;
 import kba.exception.BankAccountNotFoundException;
 import kba.exception.EmptyParameterException;
 import kba.exception.InvalidAmountException;
@@ -26,11 +27,9 @@ public class BankAccountCtl {
     @PostMapping("")
     @ApiOperation(value = "Create a bank account")
     ResponseEntity<BankAccountDTO> createBankAccount(
-            @ApiParam(value="First name of the client", required = true)
-            @RequestParam("firstName")String firstName,
-            @ApiParam(value="Last name of the client", required = true)
-            @RequestParam("lastName")String lastName) throws EmptyParameterException {
-        return new ResponseEntity<>(bankAccountSvc.createAccount(firstName, lastName), HttpStatus.CREATED);
+            @ApiParam(value="Information about the client", required = true)
+            @RequestBody ClientDTO client) throws EmptyParameterException {
+        return new ResponseEntity<>(bankAccountSvc.createAccount(client), HttpStatus.CREATED);
     }
 
     @PostMapping("/{id}/depose")

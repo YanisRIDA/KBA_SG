@@ -10,13 +10,12 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode(of= {"id"})
-@ToString(of= {"id", "balance", "lastName", "firstName", "operations"})
+@ToString(of= {"id", "balance", "client", "operations"})
 public class BankAccountDTO {
 
     int id;
     long balance;
-    String lastName;
-    String firstName;
+    ClientDTO client;
     List<OperationDTO> operations;
 
 }

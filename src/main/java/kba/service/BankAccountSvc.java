@@ -1,7 +1,10 @@
 package kba.service;
 
+import kba.dao.ClientDAO;
 import kba.domain.BankAccount;
+import kba.domain.Client;
 import kba.domain.Operation;
+import kba.dto.ClientDTO;
 import kba.exception.*;
 import kba.dto.BankAccountDTO;
 import kba.dto.OperationDTO;
@@ -26,16 +29,20 @@ public class BankAccountSvc {
     BankAccountDAO bankAccountDAO;
 
     @Autowired
+    ClientDAO clientDAO;
+
+    @Autowired
     OperationDAO operationDAO;
 
     //Creates a Bank Account and add it to the database
-    public BankAccountDTO createAccount(String firstName, String lastName) throws EmptyParameterException {
-        LOG.info("[KATA BANK] Creating a bank account for {} {}", firstName, lastName);
-        if(firstName.isEmpty())
+    public BankAccountDTO createAccount(ClientDTO clientDTO) throws EmptyParameterException {
+        LOG.info("[KATA BANK] Creating a bank account for {}", clientDTO);
+        if(clientDTO.getFirstName() == null || clientDTO.getFirstName().isEmpty())
             throw new EmptyParameterException("firstName");
-        if(lastName.isEmpty())
+        if(clientDTO.getLastName() == null || clientDTO.getLastName().isEmpty())
             throw new EmptyParameterException("lastName");
-        BankAccount bankAccount = bankAccountDAO.createBankAccount(firstName, lastName);
+        Client client = clientDAO.createClient(clientDTO.getFirstName(), clientDTO.getLastName());
+        BankAccount bankAccount = bankAccountDAO.createBankAccount(client);
         LOG.info("[KATA BANK] Successfully created bank account {}", bankAccount);
         return modelMapper.map(bankAccount, BankAccountDTO.class);
     }

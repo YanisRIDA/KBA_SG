@@ -24,14 +24,13 @@ public class BankAccountTest {
         operation.setNewBalance(300);
         BankAccount bankAccount = new BankAccount();
         bankAccount.setId(0);
-        bankAccount.setFirstName("Yanis");
-        bankAccount.setLastName("RIDA");
+        bankAccount.setClient(new Client("Yanis", "RIDA"));
         bankAccount.setBalance(1000);
         bankAccount.setOperations(new ArrayList<>());
         bankAccount.getOperations().add(operation);
         assertEquals(0, bankAccount.getId());
-        assertEquals("Yanis", bankAccount.getFirstName());
-        assertEquals("RIDA", bankAccount.getLastName());
+        assertEquals("Yanis", bankAccount.getClient().getFirstName());
+        assertEquals("RIDA", bankAccount.getClient().getLastName());
         assertEquals(1000, bankAccount.getBalance());
         assertEquals(100, bankAccount.getOperations().get(0).getAmount());
     }

@@ -1,6 +1,7 @@
 package kba.controller;
 
 import kba.dto.BankAccountDTO;
+import kba.dto.ClientDTO;
 import kba.dto.OperationDTO;
 import kba.exception.*;
 import kba.service.BankAccountSvc;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -44,8 +46,7 @@ public class BankAccountCtlTest {
     public void setUp() throws EmptyParameterException, BankAccountNotFoundException, InvalidAmountException {
         BankAccountDTO bankAccountDTO = new BankAccountDTO();
         bankAccountDTO.setId(0);
-        bankAccountDTO.setFirstName("Yanis");
-        bankAccountDTO.setLastName("RIDA");
+        bankAccountDTO.setClient(new ClientDTO("Yanis","RIDA"));
         bankAccountDTO.setBalance(0);
         bankAccountDTO.setOperations(new ArrayList<>());
 
@@ -73,9 +74,9 @@ public class BankAccountCtlTest {
 
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.bankAccountCtl).build();
-        Mockito.when(this.bankAccountSvc.createAccount("Yanis", "RIDA")).thenReturn(bankAccountDTO);
-        Mockito.when(this.bankAccountSvc.createAccount("Yanis", "")).thenThrow(new EmptyParameterException("lastName"));
-        Mockito.when(this.bankAccountSvc.createAccount("", "RIDA")).thenThrow(new EmptyParameterException("firstName"));
+        Mockito.when(this.bankAccountSvc.createAccount(new ClientDTO("Yanis","RIDA"))).thenReturn(bankAccountDTO);
+        Mockito.when(this.bankAccountSvc.createAccount(new ClientDTO("Yanis",""))).thenThrow(new EmptyParameterException("lastName"));
+        Mockito.when(this.bankAccountSvc.createAccount(new ClientDTO("","RIDA"))).thenThrow(new EmptyParameterException("firstName"));
         Mockito.when(this.bankAccountSvc.operation(0, null, OperationType.DEPOSIT)).thenThrow(new EmptyParameterException("amount"));
         Mockito.when(this.bankAccountSvc.operation(0, null, OperationType.WITHDRAWAL)).thenThrow(new EmptyParameterException("amount"));
         Mockito.when(this.bankAccountSvc.operation(10, 100L, OperationType.DEPOSIT)).thenThrow(new BankAccountNotFoundException(10));
@@ -92,8 +93,9 @@ public class BankAccountCtlTest {
     public void testCreateBankAccountOK() throws Exception {
         MockHttpServletResponse response = this.mockMvc
                 .perform(post("/api/v1/bankaccounts")
-                        .param("firstName", "Yanis")
-                        .param("lastName", "RIDA"))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content("{ \"firstName\": \"Yanis\", \"lastName\": \"RIDA\"}")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
         assertEquals(HttpStatus.CREATED.value(), response.getStatus());
         assertTrue(response.getContentAsString().contains("0"));
@@ -105,32 +107,35 @@ public class BankAccountCtlTest {
     public void testCreateBankAccountKOMissingFirstName() throws Exception {
         MockHttpServletResponse response = this.mockMvc
                 .perform(post("/api/v1/bankaccounts")
-                        .param("lastName", "RIDA"))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content("{ \"lastName\": \"RIDA\"}")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
         assertNotNull(response.getContentAsString());
-        assertTrue(response.getContentAsString().contains("Required request parameter 'firstName' " +
-                "for method parameter type String is not present"));
+        assertTrue(response.getContentAsString().contains("Empty parameter: firstName"));
     }
 
     @Test
     public void testCreateBankAccountKOMissingLastName() throws Exception {
         MockHttpServletResponse response = this.mockMvc
                 .perform(post("/api/v1/bankaccounts")
-                        .param("firstName", "Yanis"))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content("{ \"firstName\": \"Yanis\"}")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
         assertNotNull(response.getContentAsString());
-        assertTrue(response.getContentAsString().contains("Required request parameter 'lastName' " +
-                "for method parameter type String is not present"));
+        assertTrue(response.getContentAsString().contains("Empty parameter: lastName"));
     }
 
     @Test
     public void testCreateBankAccountKOEmptyFirstName() throws Exception {
         MockHttpServletResponse response = this.mockMvc
                 .perform(post("/api/v1/bankaccounts")
-                        .param("firstName", "")
-                        .param("lastName", "RIDA"))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content("{ \"firstName\": \"\", \"lastName\": \"RIDA\"}")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
         assertNotNull(response.getContentAsString());
@@ -141,12 +146,26 @@ public class BankAccountCtlTest {
     public void testCreateBankAccountKOEmptyLastName() throws Exception {
         MockHttpServletResponse response = this.mockMvc
                 .perform(post("/api/v1/bankaccounts")
-                        .param("firstName", "Yanis")
-                        .param("lastName", ""))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content("{ \"firstName\": \"Yanis\", \"lastName\": \"\"}")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
         assertNotNull(response.getContentAsString());
         assertTrue(response.getContentAsString().contains("Empty parameter: lastName"));
+    }
+
+    @Test
+    public void testCreateBankAccountKOJSONError() throws Exception {
+        MockHttpServletResponse response = this.mockMvc
+                .perform(post("/api/v1/bankaccounts")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content("{ \"firstName\": \"Yanis\", }")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
+        assertNotNull(response.getContentAsString());
+        assertTrue(response.getContentAsString().contains("Unable to parse json data, please check the format"));
     }
 
     @Test
