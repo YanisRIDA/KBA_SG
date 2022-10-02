@@ -1,6 +1,5 @@
-package kba.model.dto;
+package kba.dto;
 
-import kba.domain.Operation;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import java.util.List;
@@ -18,6 +17,6 @@ public class BankAccountDTO {
     long balance;
     String lastName;
     String firstName;
-    List<Operation> operations;
+    List<OperationDTO> operations;
 
 }

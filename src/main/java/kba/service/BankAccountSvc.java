@@ -2,12 +2,9 @@ package kba.service;
 
 import kba.domain.BankAccount;
 import kba.domain.Operation;
-import kba.exception.BankAccountNotFoundException;
-import kba.exception.InvalidAmountException;
-import kba.exception.NegativeAmountException;
-import kba.exception.NegativeBalanceException;
-import kba.model.dto.BankAccountDTO;
-import kba.model.dto.OperationDTO;
+import kba.exception.*;
+import kba.dto.BankAccountDTO;
+import kba.dto.OperationDTO;
 import kba.dao.BankAccountDAO;
 import kba.dao.OperationDAO;
 import kba.utils.OperationType;
@@ -23,7 +20,7 @@ public class BankAccountSvc {
     private final Logger LOG = LoggerFactory.getLogger(BankAccountSvc.class);
 
     @Autowired
-    private ModelMapper modelMapper;
+    ModelMapper modelMapper;
 
     @Autowired
     BankAccountDAO bankAccountDAO;
@@ -32,20 +29,23 @@ public class BankAccountSvc {
     OperationDAO operationDAO;
 
     //Creates a Bank Account and add it to the database
-    public BankAccountDTO createAccount(String firstName, String lastName) {
+    public BankAccountDTO createAccount(String firstName, String lastName) throws EmptyParameterException {
         LOG.info("[KATA BANK] Creating a bank account for {} {}", firstName, lastName);
+        if(firstName.isEmpty())
+            throw new EmptyParameterException("firstName");
+        if(lastName.isEmpty())
+            throw new EmptyParameterException("lastName");
         BankAccount bankAccount = bankAccountDAO.createBankAccount(firstName, lastName);
         LOG.info("[KATA BANK] Successfully created bank account {}", bankAccount);
         return modelMapper.map(bankAccount, BankAccountDTO.class);
     }
 
     //Creates an operation(Depose/Withdraw) and apply it on the bank account
-    public OperationDTO operation(int id, long amount, OperationType operationType) throws InvalidAmountException, BankAccountNotFoundException {
+    public OperationDTO operation(int id, Long amount, OperationType operationType) throws InvalidAmountException, BankAccountNotFoundException, EmptyParameterException {
         LOG.info("[KATA BANK] Creating {} operation", operationType);
-
-        if(amount<0) {
+        if(amount<0)
             throw new NegativeAmountException(amount);
-        }
+
         BankAccount bankAccount = bankAccountDAO.findBankAccountById(id);
         if(bankAccount==null)
             throw new BankAccountNotFoundException(id);

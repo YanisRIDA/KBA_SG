@@ -1,4 +1,4 @@
-package kba.model.dto;
+package kba.dto;
 
 import kba.utils.OperationType;
 import lombok.*;

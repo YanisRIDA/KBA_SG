@@ -10,4 +10,11 @@ public class ErrorInfo {
         this.title = ex.getMessage();
         this.details = ex.getDetails();
     }
+
+    public ErrorInfo(StringBuffer url, String title, Exception ex) {
+        this.url = String.valueOf(url);
+        this.title = title;
+        this.details = ex.getMessage();
+    }
+
 }

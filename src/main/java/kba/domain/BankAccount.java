@@ -15,8 +15,8 @@ public class BankAccount {
 
     int id;
     long balance;
-    String lastName;
     String firstName;
+    String lastName;
     List<Operation> operations;
 
     public void addOperation(Operation operation) {
